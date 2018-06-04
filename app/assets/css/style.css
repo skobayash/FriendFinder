@@ -1,0 +1,25 @@
+.jumbotron {
+    position: relative;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    font-family: 'Ropa Sans', sans-serif;
+}
+
+
+.survey-bar{
+    margin-top: 20px;
+    padding: 175px;
+    background-image: url(../images/friends.jpg);
+    background-position: 0% 25%;
+    background-size: cover;
+    background-repeat: no-repeat;
+    color: white;
+ }
+
+ .survey-button {
+     margin: 20px;
+ }
+
+.surveyqs {
+    font-family: 'Roboto', sans-serif;
+}
