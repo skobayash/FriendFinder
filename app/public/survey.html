@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Survey</title>
+
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <br>
+    <br>
+    <h4>About You</h3>
+    <hr>
+    <div class="form-group"> <!-- NAME -->
+        <label for="name">Name</label>
+        <input type="text" class="form-control" id="name-input" aria-describedby="emailHelp">
+    </div>
+    <div class="form-group"> <!-- PHOTO-->
+        <label for="photo">Link to Photo</label>
+        <input type="text" class="form-control" id="photo-input" aria-describedby="emailHelp" placeholder="https://i.imgur.com/l6oUhdH.jpg">
+    </div>
+
+    <h4>Questions</h4>
+    <h6>On a scale of 1 (strongly disagree) to 5 (strongly agree), rate how accurate the following statements are.</h6>
+    <hr>
+    <div class="form-group"> <!-- Q1 -->
+        <label for="exampleFormControlSelect1">You like cats.</label>
+        <select class="form-control" id="q1input">
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+        </select>
+    </div>
+    <div class="form-group"> <!-- Q2 -->
+        <label for="exampleFormControlSelect1">You like broccoli.</label>
+        <select class="form-control" id="q2input">
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+        </select>
+    </div>
+    <div class="form-group"> <!-- Q3 -->
+        <label for="exampleFormControlSelect1">You enjoy long walks on the beach.</label>
+        <select class="form-control" id="q3input">
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+          <option>5</option>
+        </select>
+    </div>
+
+    <!-- Submit -->
+    <input class="btn btn-primary submit" type="submit" value="Submit" data-toggle="modal" data-target="#exampleModalCenter">
+
+
+</div>
+
+  
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">Best Match:  <span id="modal-name">name</span></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <span id="modal-photo">...</span>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+<script type="text/javascript">
+
+$(".submit").on("click", function(){
+
+    var newUser = {
+        name: $('#name-input').val().trim(),
+        photo: $('#photo-input').val().trim(),
+        scores: [
+            $('#q1input').val().trim(),
+            $('#q2input').val().trim(),
+            $('#q3input').val().trim()
+        ]
+    }
+
+    var currentURL = window.location.origin;
+
+    $.post(currentURL + "/api/friends", newUser, function(data){
+            alert("Information submitted succesfully.")
+    });
+
+
+
+    $.get(currentURL + "/api/friends", function(data, status){
+
+       var bestMatch = null;
+       var bestMatchName;
+       var bestMatchPhoto;
+
+       var difArray = [];
+
+        for (var i = 0; i < data.length-1; i++) {
+
+            var sumDifference = 0;
+
+     
+    
+            for (var j = 0; j < data[0].scores.length; j++) {
+               
+                var newScore = parseFloat(newUser.scores[j]);
+                var userScore = parseFloat(data[i].scores[j]);
+                var difference = Math.abs(newScore - userScore)
+             
+                sumDifference += difference;
+                
+                if (j === data[0].scores.length-1) {
+                    difArray.push(sumDifference);
+                }
+
+            }
+
+            if (i === data.length-2) {
+
+                var temp = 15;
+                var bestMatch;
+                for (var k = 0; k < difArray.length; k++) {
+                    var newVal = parseFloat(difArray[k])
+                    if (newVal < temp) {
+                        temp = newVal;
+                        bestMatch = k
+
+                        $('#modal-name').text(data[k].name)
+                        $('#modal-photo').html("<img src=\'" + data[k].photo + "\' alt='image'>")
+                    }
+                }
+            }
+        }
+    });
+});
+
+
+
+
+
+
+</script>
+
+
+
+</body>
+</html>
