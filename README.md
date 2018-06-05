@@ -8,12 +8,12 @@ A live version of this app can be found at: https://lit-mesa-39081.herokuapp.com
 ## Installation
 
 To clone Bamazon to your local repository, enter the following in your terminal/bash window:
-``` git clone https://github.com/skobayash/Bamazon.git ```
+``` git clone https://github.com/skobayash/FriendFinder.git ```
 
-Install the following dependencies for Bamazon:
-* inquirer
-* cli-table
-* mysql
+Install the following dependencies for FriendFinder:
+* express
+* body-parser
+* path
 
 ``` npm install ```
 
