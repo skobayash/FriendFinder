@@ -23,5 +23,5 @@ By clicking on the "Go to Survey" button on the home page, users will be directe
 Based on the information the user fills out in response to 10 personality-based questions, the app will
 determine the person that has most closely matched with the user in their answers.
 
-The best match will then be returned to the user along with their name and their picture.
+The best match will then be returned to the user along with their name and their picture.s
 
