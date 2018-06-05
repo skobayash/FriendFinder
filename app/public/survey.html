@@ -2,9 +2,8 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Survey</title>
-
-	<!-- Latest compiled and minified CSS -->
+    <title>Survey</title>
+    
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
@@ -12,7 +11,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery.js"></script>
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="../assets/css/style.css">
+    <link rel="stylesheet" type="text/css" href="./css/style.css">
 </head>
 <body>
 
@@ -134,19 +133,19 @@
         </select>
     </div>
 
-    <!-- Submit -->
-    <input class="btn btn-primary submit" type="submit" value="Submit" data-toggle="modal" data-target="#exampleModalCenter">
+    <!-- Submit Button -->
+    <input class="btn btn-primary submit" type="submit" value="Submit" data-toggle="modal" data-target="#modalCenter">
 
 
 </div>
 
   
   <!-- Modal -->
-  <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal fade" id="modalCenter" tabindex="-1" role="dialog" aria-labelledby="modalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLongTitle">Best Match:  <span id="modal-name">name</span></h5>
+          <h5 class="modal-title" id="best-match">Best Match:  <span id="modal-name">name</span></h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -165,8 +164,10 @@
 
 <script type="text/javascript">
 
+// On SUBMIT
 $(".submit").on("click", function(){
 
+    // New user info taken from form input and put into object
     var newUser = {
         name: $('#name-input').val().trim(),
         photo: $('#photo-input').val().trim(),
@@ -184,46 +185,52 @@ $(".submit").on("click", function(){
         ]
     }
 
+    // Grab window location origin for posting route
     var currentURL = window.location.origin;
 
+    // Post new user object to friends.js data
     $.post(currentURL + "/api/friends", newUser, function(data){
             console.log("Information submitted succesfully.")
     });
 
 
-
+    // Get all data from friends.js
     $.get(currentURL + "/api/friends", function(data, status){
 
-       var bestMatch = null;
-       var bestMatchName;
-       var bestMatchPhoto;
+       var bestMatch = null;    // Holds index of best match
+       var bestMatchName;       // Holds name of best match
+       var bestMatchPhoto;      // Holds photo of best match
 
-       var difArray = [];
+       var difArray = []; // Array for holding difference between new user & data scores
 
+        // Iterates through each user in user array
         for (var i = 0; i < data.length-1; i++) {
 
-            var sumDifference = 0;
-
-     
+            var sumDifference = 0;  // Holds total difference between scores of new user & other user
     
-            for (var j = 0; j < data[0].scores.length; j++) {
+            // Loops through each score in score array
+            for (var j = 0; j < data[0].scores.length; j++) {   
                
-                var newScore = parseFloat(newUser.scores[j]);
-                var userScore = parseFloat(data[i].scores[j]);
+                var newScore = parseFloat(newUser.scores[j]);   // New user score
+                var userScore = parseFloat(data[i].scores[j]);  // Other use score
                 var difference = Math.abs(newScore - userScore)
              
-                sumDifference += difference;
+                sumDifference += difference;    // Adding difference in scores to total difference variable
                 
-                if (j === data[0].scores.length-1) {
-                    difArray.push(sumDifference);
+                // If iterates all the way through the scores, push final sumdifference into array
+                if (j === data[0].scores.length-1) {   
+                    difArray.push(sumDifference);       
+                    console.log(sumDifference);
                 }
-
             }
 
-            if (i === data.length-2) {
+            // If comparing new user to final other user in array (where, at this point, last user in array is the new user)
+            if (i === data.length - 2) {  
 
-                var temp = 15;
-                var bestMatch;
+                var temp = 50;  // variable starts at highest possible difference in input answers
+                var bestMatch;  
+
+                // Iterates through each sumDifference scores in difference-array & sets modal input to best match
                 for (var k = 0; k < difArray.length; k++) {
                     var newVal = parseFloat(difArray[k])
                     if (newVal < temp) {
